@@ -11,7 +11,7 @@ const { jsonLimit, urlEncodedLimit, unAuthenticatedUris, xPoweredBy, development
 
 module.exports = function (app) {
     app.use(cors());
-    app.use(tooBusy);
+    //app.use(tooBusy);
     app.disable(xPoweredBy);
     app.use(helmet());
     app.use(compression());
