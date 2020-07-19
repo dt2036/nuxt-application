@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+    aws-node-vue-nuxt-ssr:
+        image: aws-node-vue-nuxt-ssr
+        build: .
+        volumes: 
+            - nuxtVolume:/app
+        ports:
+            - 3000
+volumes: 
+    nuxtVolume:       

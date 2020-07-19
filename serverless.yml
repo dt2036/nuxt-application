@@ -1,0 +1,39 @@
+service: serverless-nuxt-app
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${env:STAGE}
+  region: ${env:REGION_ID}
+  
+package:
+  individually: true
+  excludeDevDependencies: true
+
+functions:
+  nuxt:
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+    package:
+      exclude:
+        - "client/assets/**"
+        - "client/components/**"
+        - "client/layouts/**"
+        - "client/components/**"
+        - "client/middleware/**"
+        - "client/pages/**"
+        - "client/plugins/**"
+      include:
+        - ".nuxt/**"
+        - "index.js"
+        - "nuxt.config.js"
+
+plugins:
+  - serverless-apigw-binary
+  - serverless-dotenv-plugin
+  - serverless-offline
+  - serverless-plugin-cloudfront-lambda-edge
+  - serverless-scriptable-plugin 
+

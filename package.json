@@ -1,0 +1,61 @@
+{
+  "name": "vue-nuxt",
+  "version": "1.0.0",
+  "description": "Sample Application",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "deploy:dev": "npm run build && sls deploy --stage development",
+    "deploy:test": "npm run build && sls deploy --stage test",
+    "deploy:prod": "npm run build && sls deploy --stage production",
+    "start-server": "npm run build && node app.js",
+    "start-sls": "npm run build && sls offline start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "@nuxt/http": "^0.5.10",
+    "@nuxtjs/auth": "^4.9.1",
+    "@nuxtjs/axios": "^5.12.0",
+    "aws-sdk": "^2.715.0",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "bootstrap-vue": "^2.15.0",
+    "compression": "^1.7.4",
+    "connect-multiparty": "^2.2.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "errorhandler": "^1.5.1",
+    "express-bouncer": "^0.2.0",
+    "helmet": "^3.23.3",
+    "jsonwebtoken": "^8.5.1",
+    "lodash.get": "^4.4.2",
+    "moment": "^2.27.0",
+    "nanoid": "^3.1.10",
+    "nodemon": "^2.0.4",
+    "nuxt": "^2.13.3",
+    "nuxt-start": "^2.13.3",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-dotenv-plugin": "^2.4.2",
+    "serverless-http": "^2.0.1",
+    "serverless-plugin-cloudfront-lambda-edge": "^2.1.0",
+    "serverless-scriptable-plugin": "^1.0.5",
+    "toobusy-js": "^0.5.1",
+    "underscore": "^1.10.2",
+    "@nuxtjs/vuetify": "^1.11.2"
+  },
+  "devDependencies": {
+    "serverless-domain-manager": "^4.2.0",
+    "serverless-offline": "^6.5.0"
+  }
+}
