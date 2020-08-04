@@ -26,21 +26,30 @@ module.exports = {
         }
     },
     buildModules: [
-        '@nuxtjs/vuetify'
+        '@nuxtjs/vuetify',
+        
     ],
     modules: [
         '@nuxt/http',
         '@nuxtjs/axios',
         '@nuxtjs/auth',
-        'bootstrap-vue/nuxt'
+        'bootstrap-vue/nuxt',
+        'nuxt-fontawesome'
     ],
     vuetify: {
         materialIcons: true,
         css: false,
         treeShake: true
     },
+    css: [
+        '@fortawesome/fontawesome-svg-core/styles.css',
+        
+      ],
     plugins: [
-        '~plugins/vuetify'
+        //  '~plugins/vue-confirm-dialog',
+        '~plugins/vuetify',    
+      
+       
     ],
     //http: {
     //   // baseURL: 'http://localhost:3000',

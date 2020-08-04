@@ -1,7 +1,7 @@
 const APPLICATION_CONST = {
     jsonLimit: "1kb",
     urlEncodedLimit: "1kb",
-    unAuthenticatedUris: ["/authentication", "/product/products"],
+    unAuthenticatedUris: ["/authentication", "/product/products","/todotask/todos"],
     xPoweredBy: 'x-powered-by',
     development:"development"
 

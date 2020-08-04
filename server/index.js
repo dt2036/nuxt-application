@@ -2,6 +2,9 @@ const consola = require('consola');
 const { Nuxt, Builder } = require('nuxt');
 const server = require('../api/index');
 const envconfig = require('dotenv').config();
+const aws = require("aws-sdk");
+const awsConfig = require('../config/aws-config');
+aws.config.update(awsConfig );
 let config = require('../nuxt.config.js');
 config.dev = !(process.env.NODE_ENV === 'production');
 
