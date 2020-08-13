@@ -34,8 +34,23 @@ module.exports = {
         '@nuxtjs/axios',
         '@nuxtjs/auth',
         'bootstrap-vue/nuxt',
-        'nuxt-fontawesome'
+        'nuxt-fontawesome',
+        '@nuxtjs/toast',
     ],
+    toast: {
+        theme: "bubble", 
+        position: 'top-right',
+        duration : 9000,
+        register: [ // Register custom toasts
+          {
+            name: 'my-error',
+            message: 'Oops...Something went wrong',
+            options: {
+              type: 'error'
+            }
+          }
+        ]
+    },
     vuetify: {
         materialIcons: true,
         css: false,

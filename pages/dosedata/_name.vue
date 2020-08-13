@@ -1,37 +1,56 @@
 <template>
   <div>
     <div>
-      <!-- <div>
+      <div>
         <b-button id="show-btn" @click="showModal">Open Modal</b-button>
-        
-        <b-modal ref="my-modal" no-close-on-backdrop hide-footer title="Dose List">
-            <b-button class="mt-3"   @click="hideModal">Close Me</b-button>
-          <div class="d-block text-center">
-            <div>
-              <b-table striped hover :items="items"></b-table>
-            </div>
-          </div>
-         
+
+        <b-modal ref="my-modal" no-close-on-backdrop title="Dose Add">
+          <v-card-text>
+            <v-form ref="registerForm" v-model="valid" lazy-validation>
+              <v-row>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field
+                    v-model="firstName"
+                    :rules="[rules.required]"
+                    label="First Name"
+                    maxlength="20"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field
+                    v-model="lastName"
+                    :rules="[rules.required]"
+                    label="Last Name"
+                    maxlength="20"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-spacer></v-spacer>
+                <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
+                  <v-btn block :disabled="!valid" color="green" @click="validate">Register</v-btn>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
         </b-modal>
-      </div> -->
+      </div>
       <v-data-table
         :headers="headers"
-        :items="caseList"
+        :items="items"
         sort-by="calories"
         no-data-text="No data found"
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
             <v-toolbar-title>
-              <h2>Case List</h2>
+              <h2>Dose List</h2>
             </v-toolbar-title>
 
             <v-spacer></v-spacer>
             <v-form ref="caseForm" :disabled="isdisabled" v-model="valid" lazy-validation>
               <v-dialog v-model="dialog" max-width="700px">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">New Case</v-btn>
-                </template>
                 <v-card>
                   <v-card-title>
                     <span class="headline">{{ formTitle }}</span>
@@ -106,8 +125,6 @@
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="viewItem(item)">fa fa-eye</v-icon>
           <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-             <v-icon small class="mr-2" @click="doseClick(item)"> dose  </v-icon>
-  
           <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
         </template>
       </v-data-table>
@@ -124,6 +141,7 @@
 <script>
 // const uuid = require('uuid');
 import { v4 as uuidv4 } from "uuid";
+import axios from 'axios'
 export default {
   // middleware: ['auth'],
   middleware: ["auth"],
@@ -134,11 +152,9 @@ export default {
       min: (v) => (v && v.length >= 8) || "Min 8 characters",
     },
     items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' }
-        ],
+      { name: "test1", type: "Tab", description: "1 tab morning" },
+      { name: "test2", type: "Syrup", description: "3 Spoon morning" },
+    ],
     valid: true,
     dialog: false,
     isdisabled: false,
@@ -165,18 +181,12 @@ export default {
     },
     headers: [
       {
-        text: "Case Name ",
+        text: "Dose Name",
         align: "left",
         value: "name",
       },
-      { text: "Gender", align: "left", value: "gender" },
-      { text: "Age", align: "left", value: "age" },
-      { text: "Address", align: "left", value: "address" },
-      { text: "City", align: "left", value: "city" },
-      { text: "Country", align: "left", value: "country" },
-      { text: "Status", align: "left", value: "status" },
-      { text: "Last Updated On", align: "left", value: "createdOn" },
-      { text: "Actions", align: "center", value: "actions", sortable: false },
+      { text: "Type", align: "left", value: "type" },
+      { text: "Description", align: "left", value: "description" },
     ],
   }),
   computed: {
@@ -193,74 +203,11 @@ export default {
   },
 
   methods: {
-
-  doseClick(item) {
-       debugger;
-      // /userdata/'+user.id
-     this.$router.push({path: '/dosedata/' + item.name});
-    },
-
     showModal() {
       this.$refs["my-modal"].show();
     },
     hideModal() {
       this.$refs["my-modal"].hide();
-    },
-
-    //  async validate() {
-    //   if (this.$refs.caseForm.validate()) {
-    //     debugger;
-    //     // submit form to server/API here...
-    //   }
-    // },
-    async editItem(item) {
-      this.isEdit = true;
-      let result = (await this.$axios.get(`api/case/GetById/${item.name}`))
-        .data;
-      this.dialog = true;
-      this.editedIndex = this.caseList.indexOf(item);
-      this.editedItem = result.caseData;
-    },
-
-    async editSaveClick() {
-      //  uuid.v1();
-      console.log(uuidv4());
-
-      let data = this.editedItem;
-      try {
-        await this.$axios.put("api/case/Update", data);
-
-        this.close();
-      } catch (error) {}
-    },
-
-    viewItem(item) {
-      this.isdisabled = true;
-      this.editedIndex = 300;
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    async deleteItem(item) {
-      this.$confirm({
-        message: `Are you sure delete case?`,
-        button: {
-          no: "No",
-          yes: "Yes",
-        },
-        callback: (confirm) => {
-          if (confirm) {
-            this.$axios.delete(`api/case/Delete/${item.name}`);
-            this.close();
-            this.$router.go(0);
-          }
-        },
-      });
-      // try {
-      //   await this.$axios.delete(`api/case/Delete/${item.name}`);
-      //   this.close();
-      //   this.$router.go(0);
-      // } catch (error) {}
     },
 
     close() {
@@ -272,36 +219,21 @@ export default {
         this.editedIndex = -1;
       });
     },
-
-    save() {
-      if (this.$refs.caseForm.validate()) {
-        if (this.isEdit) {
-          let data = this.editedItem;
-          try {
-            //if you want  validation work then remove async
-            this.$axios.put("api/case/Update", data);
-            // this.$router.go(0);
-            this.close();
-          } catch (error) {}
-        } else {
-          console.log(uuidv4());
-
-          let data = this.editedItem;
-          try {
-            this.$axios.post("api/case/Create", data);
-
-            this.close();
-            this.$router.go(0);
-          } catch (error) {}
-        }
-      }
-    },
   },
+  // async asyncData({ $auth,$axios, params }) {
+  //   debugger;
+  //   // let result = (await $axios.get(`api/case/GetAll`)).data;
+  //   let result = (await $axios.get(`api/case/GetById/${params.name}`)).data;
+
+  //   return {
+  //     caseList: result.caseList,
+  //   };
+  // },
+
   async asyncData({ $auth, $axios, params }) {
-    let result = (await $axios.get(`api/case/GetAll`)).data;
-    return {
-      caseList: result.caseList,
-    };
+    var data = (await $axios.get(`api/case/GetById/${params.name}`)).data;
+    debugger;
+    return data;
   },
 };
 </script>

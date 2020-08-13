@@ -4,7 +4,7 @@ module.exports = function (schema) {
         const { error } = schema.validate(request.body);
         if (error) {
             response.statusCode = 400;
-            response.send("Invalid data");
+            response.send(error.message);
         } else
             next();
     }

@@ -14,9 +14,12 @@
             <b-nav-item to="/products">Products</b-nav-item>
             <b-nav-item to="/todo">ToDo</b-nav-item>
             <b-nav-item to="/register">Sigh-Up</b-nav-item>
-             <b-nav-item to="/practice">Practice Page</b-nav-item>
-               <b-nav-item to="/bookmyshow">Book My Show</b-nav-item>
-                 <b-nav-item to="/case">Case Info</b-nav-item>
+            <b-nav-item to="/practice">Practice Page</b-nav-item>
+            <b-nav-item to="/bookmyshow">Book My Show</b-nav-item>
+            <b-nav-item to="/case">Case Info</b-nav-item>
+            <b-nav-item to="/team">Teams</b-nav-item>
+            <b-nav-item to="/match">Matchs</b-nav-item>
+             <b-nav-item to="/player">Players</b-nav-item>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
             <template v-if="$auth.$state.loggedIn">
@@ -42,9 +45,7 @@
 import get from "lodash.get";
 
 export default {
-  components: {
-       
-    },
+  components: {},
   computed: {
     picture() {
       return get(this.$auth.user, "picture");

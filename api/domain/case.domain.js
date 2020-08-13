@@ -4,23 +4,7 @@ let dynamodbConfig = require("../infrastructure/middleware/dynamodb-config");
 
 class CaseDomain {
 
-    async getByIdData(parameter, response) {
-        const dynamoDb = new aws.DynamoDB.DocumentClient({ region: "us-east-1" });
-        try {
-            var params = {
-                TableName: "CaseInfos",
-                Key: {
-                    name: parameter
 
-                }
-            };
-            var result = await dynamoDb.get(params).promise();
-            response.json({ caseData: camelcaseKeys(result.Item) })
-        } catch (error) {
-            response.json(error);
-            console.error(error);
-        }
-    }
 
     async getListData(request, response) {
         var params = { TableName: "CaseInfos" };
@@ -42,8 +26,28 @@ class CaseDomain {
         // }
     }
 
+    async getByIdData(parameter, response) {
+        const dynamoDb = new aws.DynamoDB.DocumentClient({ region: "us-east-1" });
+        try {
+            var params = {
+                TableName: "CaseInfos",
+                Key: {
+                    name: parameter
 
+                }
+            };
+            var result = await dynamoDb.get(params).promise();
+            response.json({ caseData: camelcaseKeys(result.Item) })
+        } catch (error) {
+            response.json(error);
+            console.error(error);
+        }
+    }
+    
     async createCase(request, response) {
+        request.body.doseList = [{
+            name: "test1", type: 'Tab', description: '1 tab morning'
+        }];
         var params = { TableName: "CaseInfos", Item: request.body };
         try {
             let result = await dynamodbConfig("put", params);
@@ -70,12 +74,17 @@ class CaseDomain {
 
 
     async updateCase(request, response) {
+
+        var doseList = {
+            name: "test2", type: 'Tab2', description: '2 tab morning'
+        }
+
         var params = {
             TableName: "CaseInfos",
             Key: {
                 "name": request.body.name,
             },
-            UpdateExpression: "set  address=:address, age=:age , city=:city,country=:country,createdOn=:createdOn,gender=:gender",
+            UpdateExpression: "set  address=:address, age=:age , city=:city,country=:country,createdOn=:createdOn,gender=:gender, #attrName = list_append(#attrName, :doseList)",
             ExpressionAttributeValues: {
                 ":address": request.body.address,
                 ":age": request.body.age,
@@ -83,6 +92,12 @@ class CaseDomain {
                 ":country": request.body.country,
                 ":createdOn": request.body.createdOn,
                 ":gender": request.body.gender,
+                ":doseList": doseList,
+
+            },
+            ExpressionAttributeNames: {
+                "#attrName": "doseList",
+
             },
             ReturnValues: "UPDATED_NEW"
         };
