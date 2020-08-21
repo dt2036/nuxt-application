@@ -32,7 +32,7 @@
             <v-form ref="teamForm" :disabled="isdisabled" v-model="valid" lazy-validation>
               <v-dialog v-model="dialog" max-width="700px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Add Match</v-btn>
+                  <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Add Player</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -43,6 +43,28 @@
                     <!-- {{editedItem}} -->
                     <v-container>
                       <!-- {{teamDDData}} -->
+                      <v-row>
+                        <v-text-label>Profile Pic</v-text-label>
+                        <v-image-input
+                          v-model="editedItem.imageData"
+                          :image-quality="0.85"
+                          clearable
+                          image-format="jpeg"
+                          imageHeight="200"
+                          imageWidth="200"
+                          scalingSliderColor="red"
+                        />
+                      </v-row>
+                      <v-file-input
+                        label="Player Pic"
+                        v-model="editedItem.imageData1"
+                        @change="onFileChange"
+                      ></v-file-input>
+
+                      <!-- <input type="file" @change="onFileUpload" /> -->
+                      <div id="preview">
+                        <img v-if="url" :src="url" />
+                      </div>
                       <v-row>
                         <v-col cols="12" sm="6" md="6">
                           <v-text-field
@@ -102,16 +124,31 @@
 .login-button {
   border: 0;
 }
+
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 200px;
+  max-height: 200px;
+}
 </style>
 
 <script>
 // const uuid = require('uuid');
 import { v4 as uuidv4 } from "uuid";
+import VImageInput from "vuetify-image-input";
 export default {
   // middleware: ['auth'],
   middleware: ["auth"],
-
+  components: {
+    VImageInput,
+  },
   data: () => ({
+    url: null,
     states: [
       { name: "Florida", abbr: "FL", id: 1 },
       { name: "Georgia", abbr: "GA", id: 2 },
@@ -136,6 +173,8 @@ export default {
       teamName: "",
       skill: "",
       age: null,
+      imageData: null,
+      imageData1: null,
     },
     headers: [
       {
@@ -164,6 +203,21 @@ export default {
   },
 
   methods: {
+    onFileUpload(event) {
+
+      this.editedItem.imageData1 = event.target.files[0];
+    },
+    onFileChange(e) {
+
+      if (e != undefined) {
+        // const file = e.target.files[0];
+        this.url = URL.createObjectURL(e);
+        this.editedItem.imageData1 = e;
+      } else {
+        this.url = null;
+      }
+    },
+
     async loadDDData() {
       try {
         let result = (await this.$axios.get(`api/team/GetTeamDropdownData`))
@@ -234,31 +288,51 @@ export default {
     },
 
     async save() {
+      debugger;
+
       if (this.$refs.teamForm.validate()) {
         if (this.isEdit) {
           let data = this.editedItem;
           data.TournamentId = "555";
-              data.SK = data.sk;
-                data.sK = data.sk;
+          data.SK = data.sk;
+          data.sK = data.sk;
           await this.$axios
             .put("api/player/Update", data)
             .then((res) => {
               this.$toast.success(res.data);
               this.close();
-               this.$nuxt.refresh();
+              this.$nuxt.refresh();
               // this.$router.go(0);
-            }).catch((error) => {
+            })
+            .catch((error) => {
               this.$toast.error(error.response.data);
             });
         } else {
           let data = this.editedItem;
           data.TournamentId = "555";
-           data.tournamentId = "555";
+          data.tournamentId = "555";
           data.SK = "player-" + uuidv4();
-               data.sK =  "player-" + uuidv4();
-                data.sk =  "player-" + uuidv4();
+          data.sK = "player-" + uuidv4();
+          data.sk = "player-" + uuidv4();
+
+          var form = new FormData();
+          debugger;
+          // form.append("data", this.editedItem);
+          // form.append("file", this.editedItem.imageData1);
+
+          const formData = new FormData();
+          formData.append(
+            'file',
+            this.editedItem.imageData1,
+            this.editedItem.imageData1.name
+          );
+          formData.append('data', this.editedItem);
+          const config = {
+            headers: { "Content-Type": "multipart/form-data"},
+          };
+          debugger;
           await this.$axios
-            .post("api/player/Create", data)
+            .post("api/player/Create", formData, config)
             .then((res) => {
               this.$toast.success(res.data);
               this.close();

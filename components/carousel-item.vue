@@ -3,6 +3,22 @@
 
 <template>
   <div>
+  <!-- <v-row no-gutters>
+      <v-col :md="1"
+        v-for="n in images"
+        :key="n"
+        cols="sm"
+      >
+        <v-card
+          class="pa-2"
+          outlined
+          tile
+        >
+      {{n.name}}
+        </v-card>
+      </v-col>
+    </v-row> -->
+
     <v-carousel hide-delimiters height="300" show-arrows-on-hover cycle>
       <v-carousel-item v-for="(item, i) in images" :key="i" :src="item.src" @click="Test(item)">
         <v-row class="fill-height" align="center" justify="center">

@@ -6,7 +6,7 @@ module.exports = {
     server: {
         port: 3000, // default: 3000
         host: 'localhost' // default: localhost
-      },
+    },
     head: {
         title: 'Nuxt Sample Application',
         meta: [
@@ -27,7 +27,7 @@ module.exports = {
     },
     buildModules: [
         '@nuxtjs/vuetify',
-        
+
     ],
     modules: [
         '@nuxt/http',
@@ -38,17 +38,17 @@ module.exports = {
         '@nuxtjs/toast',
     ],
     toast: {
-        theme: "bubble", 
+        theme: "bubble",
         position: 'top-right',
-        duration : 9000,
+        duration: 9000,
         register: [ // Register custom toasts
-          {
-            name: 'my-error',
-            message: 'Oops...Something went wrong',
-            options: {
-              type: 'error'
+            {
+                name: 'my-error',
+                message: 'Oops...Something went wrong',
+                options: {
+                    type: 'error'
+                }
             }
-          }
         ]
     },
     vuetify: {
@@ -58,13 +58,13 @@ module.exports = {
     },
     css: [
         '@fortawesome/fontawesome-svg-core/styles.css',
-        
-      ],
-    plugins: [
-        //  '~plugins/vue-confirm-dialog',
-        '~plugins/vuetify',    
-      
-       
+
+    ],
+    plugins: [      
+        '~plugins/vuetify',
+        // {src: '~/plugins/vue-authenticate.js', ssr: false}
+
+
     ],
     //http: {
     //   // baseURL: 'http://localhost:3000',
@@ -77,19 +77,43 @@ module.exports = {
         '~/api/index.js'
     ],
     auth: {
+        // redirect: false,
         redirect: {
             callback: '/callback',
             logout: '/signed-out'
         },
+
+
         strategies: {
             local: {
                 endpoints: {
                     login: { url: '/api/authentication', method: 'post' },
+                    logout: false,
                     user: { url: '/api/authorization/user', method: 'get', propertyName: 'user' }
                 },
                 token: {
                     property: 'token'
-                }
+                },
+            
+            },
+            facebook: {
+                client_id: 641312619821977, //your Facebook App ID e.g. 12345667890
+                redirectUri: 'http://localhost:3000/', // Your client app URL
+                responseType: 'token',
+                authorizationEndpoint: 'https://www.facebook.com/v3.0/dialog/oauth',
+              },
+              google: {
+                token_key: 'access_token',
+                client_id: '357456209136-mrjmne1s18ptgsonv9rkkngpguf4im7p.apps.googleusercontent.com',
+                redirectUri: 'http://localhost:3000/', // Your client app URL
+                // clientId:'774357141762-joam3ad5g4lhdr9kgcm6bcu4kes38ml3.apps.googleusercontent.com'
+                scope: ['openid', 'profile', 'email'],
+              },
+            github:{
+                client_id: '0513721d8996e167e3e2',
+                client_secret: 'b6413580e6fba1fe1123e653e522cca9a2e0d52c',
+                redirectUri: 'http://localhost:3000/',
+                
             },
         }
     }

@@ -5,7 +5,7 @@ class JsonWebToken {
     static getToken(claims) {
         let token = jsonWebToken.sign(
             claims,
-            process.env.TOKEN_KEY, { expiresIn: process.env.EXPIRES_IN });
+            process.env.TOKEN_KEY, { expiresIn: '24H' });
         return token;
     }
 

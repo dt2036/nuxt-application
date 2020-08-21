@@ -1,5 +1,12 @@
 const aws = require("aws-sdk");
+const multer = require("multer");
+var path = require('path');
+var fs = require('fs');
 const camelcaseKeys = require('camelcase-keys');
+const upload = multer({
+    dest: "./assets/images"
+});
+
 let dynamodbConfig = require("../infrastructure/middleware/dynamodb-config");
 
 class PlayerDomain {
@@ -56,14 +63,43 @@ class PlayerDomain {
         }
     }
 
-    async createCase(request, response) {
-        var params = { TableName: "Tournaments", Item: request.body };
+    async createPlayer(req, response) {
+        req.body.fileName = req.file.originalname;
+        var params = { TableName: "Tournaments", Item: req.body };
+        // try {
+        //     let result = await dynamodbConfig("put", params);
+        //     response.json("Player added.");
+        // } catch (e) {
+        //     response.json({ eroor: e })
+        // }
+
         try {
+            const tempPath = req.file.path;
+            const targetPath = path.join(path.dirname(tempPath), req.file.originalname);
+
+            fs.rename(tempPath, targetPath, err => {
+                if (err) return handleError(err, res);
+                
+            });
             let result = await dynamodbConfig("put", params);
-            response.json("Player added.");
+                response.json("Player added.");
+            // response.json("Player added.");
         } catch (e) {
             response.json({ eroor: e })
         }
+
+
+        // const tempPath = req.file.path;
+        // const targetPath = path.join(path.dirname(tempPath), req.file.originalname);
+
+        // fs.rename(tempPath, targetPath, err => {
+        //     if (err) return handleError(err, res);
+
+
+        // });
+
+
+
     }
 
 
@@ -74,13 +110,14 @@ class PlayerDomain {
                 "TournamentId": "555",
                 "SK": request.body.sk
             },
-            UpdateExpression: "SET teamName = :teamName,playerName = :playerName,skill = :skill,age = :age,updatedOn=:updatedOn",
+            UpdateExpression: "SET teamName = :teamName,playerName = :playerName,skill = :skill,age = :age,updatedOn=:updatedOn,imageData=:imageData",
             ExpressionAttributeValues: {
                 ":teamName": request.body.teamName,
                 ":playerName": request.body.playerName,
                 ":skill": request.body.skill,
                 ":age": request.body.age,
                 ":updatedOn": request.body.updatedOn,
+                ":imageData": request.body.imageData,
             },
             ReturnValues: "UPDATED_NEW"
         }
