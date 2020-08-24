@@ -16,3 +16,4 @@ Vue.use(VueAuthenticate, {
     }
   }
 })
+
